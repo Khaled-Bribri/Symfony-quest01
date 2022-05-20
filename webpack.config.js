@@ -5,6 +5,22 @@ const Encore = require('@symfony/webpack-encore');
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
+Encore
+    // ...
+    .setOutputPath('public/build/')
+
+    .copyFiles({
+        from: './assets/images',
+
+        // optional target path, relative to the output dir
+        to: 'images/[path][name].[ext]',
+
+        // if versioning is enabled, add the file hash too
+        //to: 'images/[path][name].[hash:8].[ext]',
+
+        // only copy files matching this pattern
+        //pattern: /\.(png|jpg|jpeg)$/
+    })
 
 Encore
     // directory where compiled assets will be stored
@@ -55,8 +71,14 @@ Encore
         config.corejs = 3;
     })
 
-    // enables Sass/SCSS support
-    //.enableSassLoader()
+    // processes files ending in .scss or .sass
+    .enableSassLoader()
+
+    // processes files ending in .less
+    .enableLessLoader()
+
+    // processes files ending in .styl
+    .enableStylusLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -70,6 +92,28 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
-;
+    ;
 
-module.exports = Encore.getWebpackConfig();
+//module.exports = Encore.getWebpackConfig();
+//supprime la dernière ligne
+// module.exports = Encore.getWebpackConfig();
+
+// et remplace par ceci
+const fullConfig = Encore.getWebpackConfig();
+fullConfig.devServer = {
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+    },
+    watchFiles: {
+        paths: ['templates/**/*.html.twig'],
+    },
+};
+module.exports = fullConfig;
+
+
+
+
+
+

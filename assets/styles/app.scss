@@ -1,0 +1,24 @@
+// assets/styles/global.scss
+
+// customize some Bootstrap variables
+
+
+
+// the ~ allows you to reference things in node_modules
+@import "~bootstrap/scss/bootstrap";
+
+$font-stack: Helvetica, sans-serif;
+$primary-color: #333;
+$secondary-color: #999;
+
+
+body {
+  font: 100% $font-stack;
+  color: $primary-color;
+  background-color: $secondary-color;
+}
+
+.logo {
+    width: 200px;
+    height: 50px;
+}
