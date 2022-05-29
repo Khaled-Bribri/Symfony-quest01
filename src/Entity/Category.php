@@ -19,7 +19,11 @@ class Category
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Program::class, orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private $programs;
+
+    #[ORM\ManyToOne(targetEntity: Program::class, inversedBy: 'categories')]
+    private $Programs;
 
 
     public function __construct()
@@ -71,6 +75,13 @@ class Category
                 $program->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function setPrograms(?Program $Programs): self
+    {
+        $this->Programs = $Programs;
 
         return $this;
     }
