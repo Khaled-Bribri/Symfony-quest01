@@ -15,8 +15,6 @@
     {% else %}
         Aucune série trouvée.
     {% endfor %}
-
-    <a href="{{ path('app_index') }}">
-        Retour à l'accueil
-    </a>
+    <a href ="{{ path('program_new')}}"><button class="class='btn-secondary btn-sm" >Ajouter une série</button></a>
+    <a href="{{ path('app_index') }}"><button class="class='btn-secondary btn-sm" >Retour à l'accueil</button></a>
 {% endblock %}

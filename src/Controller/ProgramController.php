@@ -10,6 +10,8 @@ use App\Repository\SeasonRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use App\Form\ProgramType;
 use doctrine\Persistence\ManagerRegistry;
 
 class ProgramController extends AbstractController
@@ -22,6 +24,25 @@ class ProgramController extends AbstractController
             'website' => 'Wild Series',
             'programs' => $programs,
          ]);
+    }
+
+    #[Route('/program/new', name: 'program_new')]
+    public function new(Request $request, ProgramRepository $programRepository)
+    {
+        $program = new Program();
+
+        // Create the form, linked with $program
+        $form = $this->createForm(ProgramType::class, $program);
+
+        $form->HandleRequest($request);
+
+        if($form->isSubmitted()){
+            $programRepository->add($program, true);
+            return $this->redirectToRoute('program_new');
+        }
+
+        return $this->renderForm('program/new.html.twig',['form' => $form]);
+
     }
 
     #[Route('/program/{program}',requirements: ['id'=>'\d+'], methods: ['GET'], name: 'program_show')]
