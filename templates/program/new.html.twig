@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+{{ form_errors(form)}}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_widget(form) }}
 
-{{form_start(form)}}
-{{form_widget(form)}}
 <button type="submit" class='btn-secondary btn-sm'>Add program</button>
 {{form_end(form)}}
 <a href="{{path('program_index')}}" ><button class='btn-secondary btn-sm'>Retour à l'accueil</button>  </a>

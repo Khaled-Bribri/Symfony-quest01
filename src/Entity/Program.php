@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entity;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\ProgramRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,9 +16,27 @@ class Program
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le program saisie {{ value }} est trop longue, il ne devrait pas dépasser {{ limit }} caractères',
+    )]
+    #[Assert\Unique(
+        groups: ['program_name'],
+        message: 'Le nom {{ value }} est déjà utilisé',
+    )]
+
     private $title;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
+    // le champ synopsis ne doit pas contenir la chaîne "plus belle la vie"
+    #[Assert\Regex(
+        pattern: '/plus belle la vie/i',
+        match: false,
+        message: 'Le synopsis ne doit pas contenir la chaîne "plus belle la vie"',
+    )]
+
     private $synopsis;
 
     #[ORM\Column(type: 'string', length: 255)]
