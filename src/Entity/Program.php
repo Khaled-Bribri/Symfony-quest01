@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Entity;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\ProgramRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use PhpParser\Node\Expr\Match_;
 
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
 class Program
@@ -33,7 +35,7 @@ class Program
     // le champ synopsis ne doit pas contenir la chaîne "plus belle la vie"
     #[Assert\Regex(
         pattern: '/plus belle la vie/i',
-        match: false,
+        Match: false,
         message: 'Le synopsis ne doit pas contenir la chaîne "plus belle la vie"',
     )]
 
@@ -54,13 +56,15 @@ class Program
     #[ORM\OneToMany(mappedBy: 'program', targetEntity: Episode::class, orphanRemoval: true)]
     private $episodes;
 
+    #[ORM\ManyToMany(targetEntity: Actor::class, mappedBy: 'programs')]
+    private $actors;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->seasons = new ArrayCollection();
-        $this->no = new ArrayCollection();
         $this->episodes = new ArrayCollection();
-       
+        $this->actors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,16 +210,30 @@ class Program
         return $this;
     }
 
-   
+    /**
+     * @return Collection<int, Actor>
+     */
+    public function getActors(): Collection
+    {
+        return $this->actors;
+    }
 
+    public function addActor(Actor $actor): self
+    {
+        if (!$this->actors->contains($actor)) {
+            $this->actors[] = $actor;
+            $actor->addProgram($this);
+        }
 
+        return $this;
+    }
 
+    public function removeActor(Actor $actor): self
+    {
+        if ($this->actors->removeElement($actor)) {
+            $actor->removeProgram($this);
+        }
 
-
-
-
-
-
-
-
+        return $this;
+    }
 }

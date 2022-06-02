@@ -6,12 +6,19 @@
     <div class="media">
         <img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
         <div class="media-body">
-            <h1 class="mt-0">{{ program.title }}</h1>
+        <h1>Catégorie : {{ program.category.name }}</h1>
+            <h2 class="mt-0">{{ program.title }}</h2>
             <p>{{ program.synopsis }}</p>
-            <p>Catégorie : {{ program.category.name }}</p>
+            <h2>Actors</h2>
+                {% for actor in program.actors %}
+                <li>{{actor.firstname}} {{actor.lastname}}</li>
+                {% endfor %}
+            
+            
             {% for season in seasons %}
                 <h2>Saison {{ season.number }}</h2>
                 <p>{{ season.description }}</p>
+
                <a href="{{ path('program_season_show', {'program': season.program.id, 'season': season.id}) }}">Saison {{ season.number }}</a>
             {% endfor %}
         </div>

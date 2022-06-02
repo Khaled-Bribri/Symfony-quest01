@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entity;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,7 +26,7 @@ class Category
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Program::class, orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: false)]
-    
+
     private $programs;
 
     #[ORM\ManyToOne(targetEntity: Program::class, inversedBy: 'categories')]
