@@ -2,12 +2,10 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\ActorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 
 #[ORM\Entity(repositoryClass: ActorRepository::class)]
 class Actor
@@ -24,10 +22,9 @@ class Actor
     private $lastname;
 
     #[ORM\Column(type: 'date')]
+    private $Birthdate;
 
-    private $birth_date;
-
-    #[ORM\ManyToMany(targetEntity: Program::class, inversedBy: 'actors')]
+    #[ORM\ManyToMany(targetEntity: Program::class, mappedBy: 'actors')]
     private $programs;
 
     public function __construct()
@@ -64,14 +61,14 @@ class Actor
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeInterface
+    public function getBirthdate(): ?\DateTimeInterface
     {
-        return $this->birth_date;
+        return $this->Birthdate;
     }
 
-    public function setBirthDate(\DateTimeInterface $birth_date): self
+    public function setBirthdate(\DateTimeInterface $Birthdate): self
     {
-        $this->birth_date = $birth_date;
+        $this->Birthdate = $Birthdate;
 
         return $this;
     }
@@ -88,6 +85,7 @@ class Actor
     {
         if (!$this->programs->contains($program)) {
             $this->programs[] = $program;
+            $program->addActor($this);
         }
 
         return $this;
@@ -95,7 +93,9 @@ class Actor
 
     public function removeProgram(Program $program): self
     {
-        $this->programs->removeElement($program);
+        if ($this->programs->removeElement($program)) {
+            $program->removeActor($this);
+        }
 
         return $this;
     }

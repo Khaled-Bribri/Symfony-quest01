@@ -9,8 +9,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use PhpParser\Node\Expr\Match_;
 
+
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
-class Program
+class Program 
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,11 +34,7 @@ class Program
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
     // le champ synopsis ne doit pas contenir la chaîne "plus belle la vie"
-    #[Assert\Regex(
-        pattern: '/plus belle la vie/i',
-        Match: false,
-        message: 'Le synopsis ne doit pas contenir la chaîne "plus belle la vie"',
-    )]
+
 
     private $synopsis;
 
@@ -56,8 +53,9 @@ class Program
     #[ORM\OneToMany(mappedBy: 'program', targetEntity: Episode::class, orphanRemoval: true)]
     private $episodes;
 
-    #[ORM\ManyToMany(targetEntity: Actor::class, mappedBy: 'programs')]
+    #[ORM\ManyToMany(targetEntity: Actor::class, inversedBy: 'programs')]
     private $actors;
+
 
     public function __construct()
     {
@@ -65,6 +63,7 @@ class Program
         $this->seasons = new ArrayCollection();
         $this->episodes = new ArrayCollection();
         $this->actors = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -222,7 +221,6 @@ class Program
     {
         if (!$this->actors->contains($actor)) {
             $this->actors[] = $actor;
-            $actor->addProgram($this);
         }
 
         return $this;
@@ -230,9 +228,7 @@ class Program
 
     public function removeActor(Actor $actor): self
     {
-        if ($this->actors->removeElement($actor)) {
-            $actor->removeProgram($this);
-        }
+        $this->actors->removeElement($actor);
 
         return $this;
     }

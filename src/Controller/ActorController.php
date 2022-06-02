@@ -26,10 +26,9 @@ class ActorController extends AbstractController
     {
         $actor = new Actor();
         $form = $this->createForm(ActorType::class, $actor);
-        
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()&& $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $actorRepository->add($actor, true);
 
             return $this->redirectToRoute('app_actor_index', [], Response::HTTP_SEE_OTHER);

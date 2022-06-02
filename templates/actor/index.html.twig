@@ -11,7 +11,7 @@
                 <th>Id</th>
                 <th>Firstname</th>
                 <th>Lastname</th>
-                <th>Birth_date</th>
+                <th>Birthdate</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -21,7 +21,7 @@
                 <td>{{ actor.id }}</td>
                 <td>{{ actor.firstname }}</td>
                 <td>{{ actor.lastname }}</td>
-                <td>{{ actor.birthDate ? actor.birthDate|date('Y-m-d') : '' }}</td>
+                <td>{{ actor.Birthdate ? actor.Birthdate|date('Y-m-d') : '' }}</td>
                 <td>
                     <a href="{{ path('app_actor_show', {'id': actor.id}) }}">show</a>
                     <a href="{{ path('app_actor_edit', {'id': actor.id}) }}">edit</a>
