@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Slugify;
 
 #[Route('/season')]
 class SeasonController extends AbstractController
@@ -22,13 +23,15 @@ class SeasonController extends AbstractController
     }
 
     #[Route('/new', name: 'app_season_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SeasonRepository $seasonRepository): Response
+    public function new(Request $request, SeasonRepository $seasonRepository,Slugify $slugify): Response
     {
         $season = new Season();
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $slug = $slugify->generate($season->getnumber());
+            $season->setSlug($slug);
             $seasonRepository->add($season, true);
 
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);

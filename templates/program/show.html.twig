@@ -20,6 +20,11 @@
                 <p>{{ season.description }}</p>
 
                <a href="{{ path('program_season_show', {'program': season.program.id, 'season': season.id}) }}">Saison {{ season.number }}</a>
+               <br>
+               <a href="{{path("app_episode_new")}}">
+				<button class='btn-secondary btn-sm'>Add new episode</button>
+			</a>
+			<br>
             {% endfor %}
         </div>
     </div>
