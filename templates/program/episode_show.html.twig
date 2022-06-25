@@ -3,11 +3,19 @@
 {% block title %}Episode #{{ episode.number }}{% endblock %}
 
 {% block body %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
 
-<h1>Informations sur l'épisode #{{episode.number}} de {{program.title}}</h1>
-<p>Saison {{season.number}}</p>
-<p>Synopsis : {{episode.synopsis}}</p>
-<p>Première diffusion : {{season.year}}</p>
+				<h1>Informations sur l'épisode #{{episode.number}} de {{program.title}}</h1>
+				<p>Saison {{season.number}}</p>
+				<p>Synopsis : {{episode.synopsis}}</p>
+				<p>Première diffusion : {{season.year}}</p>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 

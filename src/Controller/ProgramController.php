@@ -9,6 +9,7 @@ use App\Entity\Program;
 use App\Service\Slugify;
 use App\Form\ProgramType;
 use App\Repository\ActorRepository;
+use App\Repository\CategoryRepository;
 use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
@@ -23,12 +24,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ProgramController extends AbstractController
 {
     #[Route('/program/', name: 'program_index')]
-    public function index(ProgramRepository $programRepository): Response
+    public function index(ProgramRepository $programRepository,CategoryRepository $categoryRepository): Response
     {
         $programs =  $programRepository->findAll();
         return $this->render('program/index.html.twig', [
             'website' => 'Wild Series',
             'programs' => $programs,
+            'categories'=>$categoryRepository->findAll()
         ]);
     }
 
@@ -64,7 +66,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/program/{program}', requirements: ['id' => '\d+'], methods: ['GET'], name: 'program_show')]
-    public function show(Program $program, SeasonRepository $seasonRepository): Response
+    public function show(Program $program, SeasonRepository $seasonRepository,CategoryRepository $categoryRepository): Response
     {
 
         $seasons = $seasonRepository->findByProgram($program);
@@ -73,28 +75,28 @@ class ProgramController extends AbstractController
         if (!$program) {
             throw $this->createNotFoundException('No program found for id ' . $program);
         } else {
-            return $this->render('program/show.html.twig', ['seasons' => $seasons, 'program' => $program,]);
+            return $this->render('program/show.html.twig', ['seasons' => $seasons, 'program' => $program,'categories'=>$categoryRepository->findAll()]);
         }
     }
 
     #[Route('/program/{program}/seasons/{season}', requirements: ['programId' => '\d+', 'seasonId' => '\d+'], methods: ['GET'], name: 'program_season_show')]
-    public function showSeason(Program $program, Season $season, EpisodeRepository $episodeRepository): Response
+    public function showSeason(Program $program, Season $season, EpisodeRepository $episodeRepository, CategoryRepository $categoryRepository): Response
     {
 
         $episodes = $episodeRepository->findBySeason([$season], ['number' => 'ASC']);
-        return $this->render('program/season_show.html.twig', ['episodes' => $episodes, 'program' => $program, 'season' => $season]);
+        return $this->render('program/season_show.html.twig', ['categories'=>$categoryRepository->findAll(),'episodes' => $episodes, 'program' => $program, 'season' => $season]);
     }
 
     #[Route('/program/{program}/seasons/{season}/episodes/{episode}', requirements: ['programId' => '\d+', 'seasonId' => '\d+', 'episodeId' => '\d+'], methods: ['GET'], name: 'episode_show')]
-    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    public function showEpisode(Program $program, Season $season, Episode $episode,CategoryRepository $categoryRepository): Response
     {
 
 
-        return $this->render('program/episode_show.html.twig', ['episode' => $episode, 'program' => $program, 'season' => $season]);
+        return $this->render('program/episode_show.html.twig', ['categories'=>$categoryRepository->findAll(),'episode' => $episode, 'program' => $program, 'season' => $season]);
     }
 
     #[Route('/program/{program}/edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'], name: 'program_edit')]
-    public function edit(Program $program, ProgramRepository $programRepository, Request $request, Slugify $slugify): Response
+    public function edit(Program $program, ProgramRepository $programRepository,CategoryRepository $categoryRepository ,Request $request, Slugify $slugify): Response
     {
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
@@ -107,7 +109,7 @@ class ProgramController extends AbstractController
             return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('program/edit.html.twig', ['form' => $form]);
+        return $this->renderForm('program/edit.html.twig', ['form' => $form,'categories'=>$categoryRepository->findAll()]);
     }
 
     #[Route('/program/{program}/delete', requirements: ['id' => '\d+'], methods: ['GET', 'POST'], name: 'program_delete')]

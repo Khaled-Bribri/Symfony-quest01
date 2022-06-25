@@ -3,31 +3,50 @@
 {% block title %}Série #{{ program.id }}{% endblock %}
 
 {% block body %}
-    <div class="media">
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
         <img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
         <div class="media-body">
         <h1>Catégorie : {{ program.category.name }}</h1>
-            <h2 class="mt-0">{{ program.title }}</h2>
-            <p>{{ program.synopsis }}</p>
-            <h2>Actors</h2>
+        <h2 class="mt-0">{{ program.title }}</h2>
+        <p>{{ program.synopsis }}</p>
+            <h5>Actors</h5>
                 {% for actor in program.actors %}
                 <li>{{actor.firstname}} {{actor.lastname}}</li>
                 {% endfor %}
-            
-            
-            {% for season in seasons %}
+                <br>
+                <br>
+                
+        </div>
+
+
+                <div class="container-fluid">
+                <div class="row">
+                {% for season in seasons %}
+                <div class="col-sm-4">
                 <h2>Saison {{ season.number }}</h2>
                 <p>{{ season.description }}</p>
 
-               <a href="{{ path('program_season_show', {'program': season.program.id, 'season': season.id}) }}">Saison {{ season.number }}</a>
+
+               <a class="btn btn-primary" href="{{ path('program_season_show', {'program': season.program.id, 'season': season.id}) }}">Saison {{ season.number }}</a>
                <br>
-               <a href="{{path("app_episode_new")}}">
-				<button class='btn-secondary btn-sm'>Add new episode</button>
-			</a>
+               <br>
+               <a class="btn btn-primary" href="{{path("app_episode_new")}}">
+				Add new episode</a>
 			<br>
-            {% endfor %}
+                </div>
+                
+            {% endfor %} 
+            </div>
+            </div>       
+            </div>
         </div>
     </div>
+</div>
+       
+    
     <a href="{{ path('program_index') }}"><button class="class='btn-secondary btn-sm" >Retour à la liste des programmes</button>
         
     </a>

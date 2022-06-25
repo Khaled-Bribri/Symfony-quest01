@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Season;
 use App\Form\SeasonType;
+use App\Repository\CategoryRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,15 +16,16 @@ use App\Service\Slugify;
 class SeasonController extends AbstractController
 {
     #[Route('/', name: 'app_season_index', methods: ['GET'])]
-    public function index(SeasonRepository $seasonRepository): Response
+    public function index(SeasonRepository $seasonRepository,CategoryRepository $categoryRepository): Response
     {
         return $this->render('season/index.html.twig', [
             'seasons' => $seasonRepository->findAll(),
+            'categories'=>$categoryRepository->finAll()
         ]);
     }
 
     #[Route('/new', name: 'app_season_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SeasonRepository $seasonRepository,Slugify $slugify): Response
+    public function new(Request $request,CategoryRepository $categoryRepository ,SeasonRepository $seasonRepository,Slugify $slugify): Response
     {
         $season = new Season();
         $form = $this->createForm(SeasonType::class, $season);
@@ -40,19 +42,21 @@ class SeasonController extends AbstractController
         return $this->renderForm('season/new.html.twig', [
             'season' => $season,
             'form' => $form,
+            'categories'=>$categoryRepository->finAll()
         ]);
     }
 
     #[Route('/{id}', name: 'app_season_show', methods: ['GET'])]
-    public function show(Season $season): Response
+    public function show(Season $season, CategoryRepository $categoryRepository): Response
     {
         return $this->render('season/show.html.twig', [
             'season' => $season,
+            'categories'=>$categoryRepository->finAll()
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_season_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Season $season, SeasonRepository $seasonRepository): Response
+    public function edit(Request $request, Season $season,CategoryRepository $categoryRepository, SeasonRepository $seasonRepository): Response
     {
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
@@ -66,6 +70,7 @@ class SeasonController extends AbstractController
         return $this->renderForm('season/edit.html.twig', [
             'season' => $season,
             'form' => $form,
+            'categories'=>$categoryRepository->finAll()
         ]);
     }
 

@@ -20,7 +20,7 @@ class CategoryController extends AbstractController
     public function index(CategoryRepository $categoryRepository):Response
     {
         $categories = $categoryRepository->findAll();
-        return $this->render('category/index.html.twig', [
+        return $this->render('navbar/_navbar.html.twig', [
             'categories' => $categories,
         ]);
     }
@@ -64,7 +64,7 @@ class CategoryController extends AbstractController
         }
         else
         {
-            return $this->render('category/show.html.twig', ['category' => $category, 'programs' => $programs,]);
+            return $this->render('category/show.html.twig', ['categories'=>$categoryRepository->findAll(),'category' => $category, 'programs' => $programs,]);
         }
         
     }

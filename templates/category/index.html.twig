@@ -4,14 +4,21 @@
 
 {% block body %}
     <h1>Tous les programmes : </h1>
+    <div class = "row">
     {% for category in categories %}
-        <div>
-            <h2>{{ loop.index }} / Catégorie : {{ category.name }}</h2>
-            <a href="{{ path("category_show", { categoryName: category.name }) }}">Voir la fiche</a>
+<div class="col-sm-4">
+    <div class="card">
+            <div class="card-body">
+                <h2  class="card-title">{{ loop.index }} / Catégorie : {{ category.name }}</h2>
+                <a href="{{ path("category_show", { categoryName: category.name }) }}">Voir la fiche</a>
+           
         </div>
+    </div>
+</div>
     {% else %}
         Aucune catégorie trouvée.
     {% endfor %}
+</div>
     <a href = "{{ path('category_new') }}" ><button class='btn-secondary btn-sm'>Ajouter une catégorie</button></a>
     <a href="{{ path('app_index') }}" ><button class='btn-secondary btn-sm'>Retour à l'accueil</button></a>
 {% endblock %}
