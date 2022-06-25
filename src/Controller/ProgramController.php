@@ -35,7 +35,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/program/new', name: 'program_new')]
-    public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, Slugify $slugify)
+    public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, Slugify $slugify,CategoryRepository $categoryRepository)
     {
         $program = new Program();
 
@@ -62,7 +62,7 @@ class ProgramController extends AbstractController
             return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('program/new.html.twig', ['form' => $form]);
+        return $this->renderForm('program/new.html.twig', ['categories'=>$categoryRepository->findAll(),'form' => $form]);
     }
 
     #[Route('/program/{program}', requirements: ['id' => '\d+'], methods: ['GET'], name: 'program_show')]
