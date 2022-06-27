@@ -2,17 +2,23 @@
 // src/Controller/ProgramController.php
 namespace App\Controller;
 
+
+use App\Entity\User;
 use App\Entity\Actor;
 use App\Entity\Season;
+use App\Entity\Comment;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Service\Slugify;
+use App\Form\CommentType;
 use App\Form\ProgramType;
+use App\Service\ConnectedUser;
 use App\Repository\ActorRepository;
-use App\Repository\CategoryRepository;
 use App\Repository\SeasonRepository;
+use App\Repository\CommentRepository;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
+use App\Repository\CategoryRepository;
 use doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +85,7 @@ class ProgramController extends AbstractController
         }
     }
 
-    #[Route('/program/{program}/seasons/{season}', requirements: ['programId' => '\d+', 'seasonId' => '\d+'], methods: ['GET'], name: 'program_season_show')]
+    #[Route('/program/{program}/seasons/{season}', requirements: ['programId' => '\d+', 'seasonId' => '\d+'], methods: ['GET' , 'POST'], name: 'program_season_show')]
     public function showSeason(Program $program, Season $season, EpisodeRepository $episodeRepository, CategoryRepository $categoryRepository): Response
     {
 
@@ -87,13 +93,34 @@ class ProgramController extends AbstractController
         return $this->render('program/season_show.html.twig', ['categories'=>$categoryRepository->findAll(),'episodes' => $episodes, 'program' => $program, 'season' => $season]);
     }
 
-    #[Route('/program/{program}/seasons/{season}/episodes/{episode}', requirements: ['programId' => '\d+', 'seasonId' => '\d+', 'episodeId' => '\d+'], methods: ['GET'], name: 'episode_show')]
-    public function showEpisode(Program $program, Season $season, Episode $episode,CategoryRepository $categoryRepository): Response
+    #[Route('/program/{program}/seasons/{season}/episodes/{episode}', requirements: ['programId' => '\d+', 'seasonId' => '\d+', 'episodeId' => '\d+'], methods: ['GET','POST'], name: 'episode_show')]
+    public function showEpisode(Request $request, Program $program, Season $season, Episode $episode,CategoryRepository $categoryRepository, CommentRepository $commentRepository): Response
     {
+        $comments = $commentRepository->findall();
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+        if($this->getUser()){
+            $user = $this->container->get('security.token_storage')->getToken()->getUser()->getemail();
+            $id = $this->container->get('security.token_storage')->getToken()->getUser()->getId();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $comment->setAuthor($id);
+                $comment->setEpisode($episode->getId());
+                $commentRepository->add($comment, true);
+                $this->addFlash('success', 'Your comment was submitted');
+                return $this->redirectToRoute('program_index',[],Response::HTTP_SEE_OTHER);
+            }
+        }
 
+        return $this->render('program/episode_show.html.twig', 
+        ['categories'=>$categoryRepository->findAll(),
+        'episode' => $episode, 'program' => $program, 
+        'season' => $season, 'form'=>$form->createView(),
+        'comments'=>$comments,
+        
+    ]);
 
-        return $this->render('program/episode_show.html.twig', ['categories'=>$categoryRepository->findAll(),'episode' => $episode, 'program' => $program, 'season' => $season]);
-    }
+}
 
     #[Route('/program/{program}/edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'], name: 'program_edit')]
     public function edit(Program $program, ProgramRepository $programRepository,CategoryRepository $categoryRepository ,Request $request, Slugify $slugify): Response

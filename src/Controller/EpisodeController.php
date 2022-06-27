@@ -19,10 +19,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class EpisodeController extends AbstractController
 {
     #[Route('/', name: 'app_episode_index', methods: ['GET'])]
-    public function index(EpisodeRepository $episodeRepository): Response
+    public function index(EpisodeRepository $episodeRepository, CategoryRepository $categoryRepository): Response
     {
         return $this->render('episode/index.html.twig', [
             'episodes' => $episodeRepository->findAll(),
+            'categries'=>$categoryRepository->findAll()
         ]);
     }
 

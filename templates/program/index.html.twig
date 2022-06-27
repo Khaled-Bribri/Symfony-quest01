@@ -4,10 +4,10 @@
 
 {% block body %}
     <h1>Toutes les séries de la table program : </h1>
- <div class="row">    
+<div class="row">    
 {% for program in programs %}
 
-  <div class="col-sm-12">
+  <div class="col-sm-12 col-md-6 col-lg-4">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">{{ loop.index }} / {{ program.title }} - Catégorie : {{ program.category.name }}</h5>
@@ -18,7 +18,7 @@
         <a class="btn btn-primary" href="{{ path("program_delete", { program: program.id }) }}">Supprimer</a>
       </div>
     </div>
-    </div>
+  </div>
 
     {% else %}
 
